@@ -1,6 +1,7 @@
 # --- Define our library ---
 add_library(GameLogic
-        source/HelloWorld.cpp
+        source/Scene.cpp
+        source/Tile.cpp
 )
 
 # --- Include files ---

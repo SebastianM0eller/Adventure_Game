@@ -23,3 +23,14 @@ target_compile_options(${PROJECT_NAME} PRIVATE
         /W4 /permissive-
         >
 )
+
+# --- Post Build ---
+
+# Copy the asset folder to the build directory
+set(ASSETS_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ASSETS_SOURCE_PATH}"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+        COMMENT "Copying assets to output directory..."
+)

@@ -2,9 +2,14 @@
 // Created by sebastian on 12/12/25.
 //
 
-#include "GameLogic/source/HelloWorld.cpp"
+#include <iostream>
+#include <ostream>
+
+#include "Scene.h"
 
 int main()
 {
- helloWorld();
+
+  MapScene world;
+  world.display();
 }
