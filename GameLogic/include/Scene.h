@@ -4,20 +4,20 @@
 
 #pragma once
 #include "Tile.h"
-#include <string>
 #include <vector>
+#include <memory>
 
 
 /**
- * @class MapScene
+ * @class Scene
  * @brief Stores a grid of tiles, which represents parts of the world.
  */
-class MapScene
+class Scene
 {
 public:
-  MapScene();
-  //MapScene(std::string filePath);
-  ~MapScene() = default;
+  Scene();
+  //Scene(std::string filePath);
+  ~Scene() = default;
 
   void display() const;
 
@@ -29,8 +29,10 @@ private:
    * - [Row] corresponds to Y (vertical)
    * - [Column] corresponds to X (horizontal)
    */
-  std::vector<std::vector<Tile>> m_grid;
+  std::vector<std::vector<std::unique_ptr<Tile>>> m_grid;
 
   void printBorder() const;
   void printTiles() const;
+
+  std::vector<std::unique_ptr<Tile>> createRow(int width, bool walkable, char c);
 };

@@ -10,6 +10,6 @@
 int main()
 {
 
-  MapScene world;
+  Scene world;
   world.display();
 }

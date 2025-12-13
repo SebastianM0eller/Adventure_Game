@@ -14,47 +14,20 @@
  * of 5x20 The layout consists of empty rows, with a single
  * path running horizontally across the center.
  */
-MapScene::MapScene()
+Scene::Scene()
 {
-  const std::vector<Tile> row_empty(20, Tile());
-  const std::vector<Tile> row_with_path(20, Tile(true, '#'));
-
-  m_grid.push_back(row_empty);
-  m_grid.push_back(row_empty);
-  m_grid.push_back(row_with_path);
-  m_grid.push_back(row_empty);
-  m_grid.push_back(row_empty);
+  m_grid.push_back(createRow(20, false, ' '));
+  m_grid.push_back(createRow(20, false, ' '));
+  m_grid.push_back(createRow(20, true, '#'));
+  m_grid.push_back(createRow(20, false, ' '));
+  m_grid.push_back(createRow(20, false, ' '));
 }
-
-/*
-Scene::Scene(std::string filePath)
-{
-  std::ifstream inputFile(filePath);
-
-  // Check if the file was opened successfully
-  if (!inputFile.is_open())
-  {
-    std::cerr << "Error: Could not open the specified file" << std::endl;
-  }
-
-  std::string line;
-  while (std::getline(inputFile, line))
-  {
-    std::vector<Tile> row;
-    for (char c : line)
-    {
-      row.push_back(static_cast<Tile>(c));
-    }
-    m_tiles.push_back(row);
-  }
-}
-*/
 
 /**
  * @brief Renders the current scene state to the standard output.
  * @details This includes a border and the internal grid of tiles.
  */
-void MapScene::display() const
+void Scene::display() const
 {
   if (m_grid.empty()) return; // Safety check
 
@@ -64,10 +37,10 @@ void MapScene::display() const
 }
 
 /**
- * @brief Prints a horizontal border, matching the width the grid.
+ * @brief Prints a horizontal border, matching the width of the grid.
  * Uses dashed ('-') to represent the boundary.
  */
-void MapScene::printBorder() const
+void Scene::printBorder() const
 {
   // The loop is used to match the tile width
   for (const auto& _ : m_grid[0])
@@ -84,15 +57,33 @@ void MapScene::printBorder() const
  * @brief Iterates through the tile grid and prints the corresponding chars.
  * Uses ('|') at the start and end of each row, for a clean boundary.
  */
-void MapScene::printTiles() const
+void Scene::printTiles() const
 {
   for (const auto& row : m_grid)
   {
     std::cout << '|';
     for (const auto& tile : row)
     {
-      std::cout << tile.getChar();
+      std::cout << tile->getChar();
     }
     std::cout << "| \n";
   }
+}
+
+/**
+ * @brief Generates a row of distinct tile objects.
+ * * @param width Number og tiles to generate
+ * @param walkable The collision state for all the tiles in the row.
+ * @param c The ASCII char representation for all the tiles in the row.
+ * @return A vector of unique_ptrs to the tiles.
+ */
+std::vector<std::unique_ptr<Tile>> Scene::createRow(const int width, const bool walkable, const char c)
+{
+  std::vector<std::unique_ptr<Tile>> row;
+  for (int i = 0; i < width; ++i)
+  {
+    row.push_back(std::make_unique<Tile>(walkable, c));
+  }
+
+  return row;
 }
