@@ -42,5 +42,6 @@ private:
   int m_playerX {0};
   int m_playerY {2};
 
+  [[nodiscard]] std::vector<int> getMove() const;
   std::vector<std::unique_ptr<Tile>> createRow(int width, bool walkable, char c);
 };
