@@ -21,6 +21,49 @@ Scene::Scene()
   m_grid.push_back(createRow(20, true, '#'));
   m_grid.push_back(createRow(20, false, ' '));
   m_grid.push_back(createRow(20, false, ' '));
+
+  m_playerLocation = std::make_unique<Tile>(false, 'P');
+  std::swap(m_grid[m_playerY][m_playerX], m_playerLocation);
+}
+
+void Scene::move()
+{
+  std::cout << "What direction do you want to move? (n/s/e/w)" << "\n";
+  std::string direction;
+  std::cin >> direction;
+
+  int dx = 0;
+  int dy = 0;
+
+  switch (direction[0])
+  {
+    case 'n':
+      dy = -1;
+      break;
+    case 's':
+      dy = 1;
+      break;
+    case 'e':
+      dx = 1;
+      break;
+    case 'w':
+      dx = -1;
+      break;
+
+  default:
+      std::cout << "Please enter a valid option" << '\n';
+      return;
+  }
+  // Handle the exit logic and move the tile back onto its spot.
+  m_playerLocation->onExited();
+  std::swap(m_playerLocation, m_grid[m_playerY][m_playerX]);
+
+  // Move the player to the new tile and handle the entered logic
+  m_playerX += dx;
+  m_playerY += dy;
+
+  std::swap(m_playerLocation, m_grid[m_playerY][m_playerX]);
+  m_playerLocation->onEntered();
 }
 
 /**

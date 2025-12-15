@@ -2,7 +2,6 @@
 add_library(GameLogic
         source/Scene.cpp
         source/Tile.cpp
-        source/Player.cpp
 )
 
 # --- Include files ---

@@ -20,6 +20,7 @@ public:
   ~Scene() = default;
 
   void display() const;
+  void move();
 
 private:
   /**
@@ -33,6 +34,13 @@ private:
 
   void printBorder() const;
   void printTiles() const;
+
+  /**
+   * @brief Points to the tile, the player stands on.
+   */
+  std::unique_ptr<Tile> m_playerLocation;
+  int m_playerX {0};
+  int m_playerY {2};
 
   std::vector<std::unique_ptr<Tile>> createRow(int width, bool walkable, char c);
 };

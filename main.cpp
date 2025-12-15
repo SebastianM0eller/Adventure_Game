@@ -11,5 +11,9 @@ int main()
 {
 
   Scene world;
-  world.display();
+  while (true)
+  {
+    world.move();
+    world.display();
+  }
 }
