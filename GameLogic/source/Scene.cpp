@@ -23,9 +23,12 @@ Scene::Scene()
   m_grid.push_back(createRow(20, false, ' '));
 
   m_playerLocation = std::make_unique<Tile>(false, 'P');
-  std::swap(m_grid[m_playerY][m_playerX], m_playerLocation);
+  std::swap(m_grid.at(m_playerY).at(m_playerX), m_playerLocation);
 }
 
+/**
+ * @brief
+ */
 void Scene::move()
 {
   const std::vector<int> move = getMove();
@@ -35,23 +38,31 @@ void Scene::move()
   // Check if we actually move
   if (dx == 0 && dy == 0) return;
 
-  // Safety check to see of the move is valid
-  if (!m_grid[m_playerY + dy][m_playerX + dx]->isWalkable())
+  // A safety check, to handle if the player tries to move out of bounds.
+  try
+  {  // Safety check to see of the move is valid
+    if (!m_grid.at(m_playerY + dy).at(m_playerX + dx)->isWalkable())
+    {
+      std::cout << "You cannot move that way!" << '\n';
+      return;
+    }
+
+    // Handle the exit logic and move the tile back onto its spot.
+    m_playerLocation->onExited();
+    std::swap(m_playerLocation, m_grid.at(m_playerY).at(m_playerX));
+
+    // Move the player to the new tile and handle the entered logic
+    m_playerX += dx;
+    m_playerY += dy;
+
+    std::swap(m_playerLocation, m_grid.at(m_playerY).at(m_playerX));
+    m_playerLocation->onEntered();}
+
+  catch (const std::out_of_range& e)
   {
     std::cout << "You cannot move that way!" << '\n';
-    return;
   }
 
-  // Handle the exit logic and move the tile back onto its spot.
-  m_playerLocation->onExited();
-  std::swap(m_playerLocation, m_grid[m_playerY][m_playerX]);
-
-  // Move the player to the new tile and handle the entered logic
-  m_playerX += dx;
-  m_playerY += dy;
-
-  std::swap(m_playerLocation, m_grid[m_playerY][m_playerX]);
-  m_playerLocation->onEntered();
 }
 
 /**
