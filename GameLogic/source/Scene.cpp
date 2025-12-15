@@ -27,7 +27,12 @@ Scene::Scene()
 }
 
 /**
- * @brief
+ * @brief Attempts to move the player to a new location within the grid.
+ *
+ * The function retrieves the movement vector and validates the destination.
+ * It handles the movement, including bounds checking, walkability
+ * checks, and tile transition events (onExited/onEntered).
+ * @note handles the std::out_of_range exception internally.
  */
 void Scene::move()
 {
