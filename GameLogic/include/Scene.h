@@ -3,9 +3,12 @@
 //
 
 #pragma once
-#include "Tile.h"
+#include "Tiles/Tile.h"
+#include "Tiles/EmptyTile.h"
+#include "Tiles/PathTile.h"
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 
 /**
@@ -15,8 +18,7 @@
 class Scene
 {
 public:
-  Scene();
-  //Scene(std::string filePath);
+  Scene(const std::string& filePath);
   ~Scene() = default;
 
   void display() const;
@@ -43,5 +45,9 @@ private:
   int m_playerY {2};
 
   [[nodiscard]] std::vector<int> getMove() const;
-  std::vector<std::unique_ptr<Tile>> createRow(int width, bool walkable, char c);
+
+  std::unordered_map<char,std::shared_ptr<Tile>> m_tiles {
+  {' ', std::make_shared<EmptyTile>(EmptyTile())},
+  {'#', std::make_shared<PathTile>(PathTile())}
+  };
 };

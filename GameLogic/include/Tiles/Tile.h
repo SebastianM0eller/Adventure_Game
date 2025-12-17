@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <memory>
 
 
 /**
@@ -12,9 +13,9 @@
 class Tile
 {
 public:
-  Tile();
   Tile(bool walkable, char character);
   virtual ~Tile() = default;
+  [[nodiscard]] virtual std::unique_ptr<Tile> clone() const = 0;
 
   [[nodiscard]] char getChar() const;
   [[nodiscard]] bool isWalkable() const;

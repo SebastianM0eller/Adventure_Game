@@ -2,16 +2,7 @@
 // Created by sebastian on 12/13/25.
 //
 
-#include "Tile.h"
-
-/**
- * @brief Constructs a default tile.
- * * Initializes the tile as "empty space" (non-walkable and invisible).
- * Default ASCII char is a space (' ')
- */
-Tile::Tile()
-  : m_walkable(false), m_char(' ') {}
-
+#include "../../include/Tiles/Tile.h"
 
 /**
  * @brief Constructs a tile with specific properties.

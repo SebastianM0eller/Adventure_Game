@@ -3,17 +3,8 @@
 //
 
 #include <iostream>
-#include <ostream>
-
-#include "Scene.h"
 
 int main()
 {
-
-  Scene world;
-  while (true)
-  {
-    world.move();
-    world.display();
-  }
+ std::cout << "Hello World!" << std::endl;
 }

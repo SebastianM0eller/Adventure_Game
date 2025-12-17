@@ -3,28 +3,34 @@
 //
 
 #include "Scene.h"
-
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 
-/**
- * @brief Constructs a new scene object.
- * Initializes the internal tile grid, with a default size
- * of 5x20 The layout consists of empty rows, with a single
- * path running horizontally across the center.
- */
-Scene::Scene()
+Scene::Scene(const std::string& filePath)
 {
-  m_grid.push_back(createRow(20, false, ' '));
-  m_grid.push_back(createRow(20, false, ' '));
-  m_grid.push_back(createRow(20, true, '#'));
-  m_grid.push_back(createRow(20, false, ' '));
-  m_grid.push_back(createRow(20, false, ' '));
+  std::ifstream sceneFile(filePath);
 
-  m_playerLocation = std::make_unique<Tile>(false, 'P');
-  std::swap(m_grid.at(m_playerY).at(m_playerX), m_playerLocation);
+  // Check to see if the file opened successfully
+  if (!sceneFile.is_open())
+  {
+    std::cerr << "Failed to open file: " << filePath << '\n';
+    return;
+  }
+  std::string row;
+  // read the file line by line
+  while (std::getline(sceneFile, row))
+  {
+    std::vector<std::unique_ptr<Tile>> tileRow;
+
+    for (char tileKey : row)
+    {
+      tileRow.push_back(m_tiles.at(tileKey)->clone());
+    }
+    m_grid.push_back(std::move(tileRow));
+  }
 }
+
 
 /**
  * @brief Attempts to move the player to a new location within the grid.
@@ -101,7 +107,7 @@ std::vector<int> Scene::getMove() const
 }
 
 /**
- * @brief Renders the current scene state to the standard output.
+ * @brief Renders the scene to the standard output.
  * @details This includes a border and the internal grid of tiles.
  */
 void Scene::display() const
@@ -145,22 +151,4 @@ void Scene::printTiles() const
     }
     std::cout << "| \n";
   }
-}
-
-/**
- * @brief Generates a row of distinct tile objects.
- * * @param width Number og tiles to generate
- * @param walkable The collision state for all the tiles in the row.
- * @param c The ASCII char representation for all the tiles in the row.
- * @return A vector of unique_ptrs to the tiles.
- */
-std::vector<std::unique_ptr<Tile>> Scene::createRow(const int width, const bool walkable, const char c)
-{
-  std::vector<std::unique_ptr<Tile>> row;
-  for (int i = 0; i < width; ++i)
-  {
-    row.push_back(std::make_unique<Tile>(walkable, c));
-  }
-
-  return row;
 }

@@ -1,7 +1,8 @@
 # --- Define our library ---
 add_library(GameLogic
         source/Scene.cpp
-        source/Tile.cpp
+        source/Tiles/Tile.cpp
+        source/Tiles/PathTile.cpp
 )
 
 # --- Include files ---
