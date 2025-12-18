@@ -4,7 +4,11 @@
 
 #include <iostream>
 
+#include "Scene.h"
+
+
 int main()
 {
- std::cout << "Hello World!" << std::endl;
+ Scene test_scene("assets/test.txt");
+ test_scene.display();
 }

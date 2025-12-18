@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "Tile.h"
+#include "Tiles/Tile.h"
 
 class PathTile : public Tile
 {

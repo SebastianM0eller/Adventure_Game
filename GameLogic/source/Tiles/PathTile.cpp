@@ -4,8 +4,6 @@
 
 #include "Tiles/PathTile.h"
 
-#include "Tiles/Tile.h"
-
 PathTile::PathTile()
   : Tile(true, '#') {}
 

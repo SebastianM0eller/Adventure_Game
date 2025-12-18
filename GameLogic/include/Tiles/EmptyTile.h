@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "Tile.h"
+#include "Tiles/Tile.h"
 
 class EmptyTile : public Tile
 {
 public:
   EmptyTile();
-  ~EmptyTile() override = default;
+  ~EmptyTile() override;
 
-  std::unique_ptr<Tile> clone() const override;
+  [[nodiscard]] std::unique_ptr<Tile> clone() const override;
 };

@@ -3,6 +3,8 @@ add_library(GameLogic
         source/Scene.cpp
         source/Tiles/Tile.cpp
         source/Tiles/PathTile.cpp
+        source/Tiles/EmptyTile.cpp
+        source/Game.cpp
 )
 
 # --- Include files ---

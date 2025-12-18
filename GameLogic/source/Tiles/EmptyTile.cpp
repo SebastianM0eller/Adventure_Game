@@ -7,5 +7,7 @@
 EmptyTile::EmptyTile()
   : Tile(false, ' ') {}
 
+EmptyTile::~EmptyTile() {}
+
 std::unique_ptr<Tile> EmptyTile::clone() const
 { return std::make_unique<EmptyTile>(*this); }

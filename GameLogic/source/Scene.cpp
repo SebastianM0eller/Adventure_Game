@@ -7,6 +7,8 @@
 #include <fstream>
 #include <filesystem>
 
+// --- Initializer --- //
+
 Scene::Scene(const std::string& filePath)
 {
   std::ifstream sceneFile(filePath);
@@ -21,90 +23,32 @@ Scene::Scene(const std::string& filePath)
   // read the file line by line
   while (std::getline(sceneFile, row))
   {
-    std::vector<std::unique_ptr<Tile>> tileRow;
+    std::vector<std::unique_ptr<Tile>> tileRow = generateTileRow(row);
+    if (!tileRow.empty())
+    {
+      m_grid.push_back(std::move(tileRow));
+    }
+  }
+}
 
-    for (char tileKey : row)
+std::vector<std::unique_ptr<Tile>> Scene::generateTileRow(const std::string& row) const
+{
+  std::vector<std::unique_ptr<Tile>> tileRow;
+  for (char tileKey : row)
+  {
+    try
     {
       tileRow.push_back(m_tiles.at(tileKey)->clone());
     }
-    m_grid.push_back(std::move(tileRow));
-  }
-}
-
-
-/**
- * @brief Attempts to move the player to a new location within the grid.
- *
- * The function retrieves the movement vector and validates the destination.
- * It handles the movement, including bounds checking, walkability
- * checks, and tile transition events (onExited/onEntered).
- * @note handles the std::out_of_range exception internally.
- */
-void Scene::move()
-{
-  const std::vector<int> move = getMove();
-  const int dx = move[0];
-  const int dy = move[1];
-
-  // Check if we actually move
-  if (dx == 0 && dy == 0) return;
-
-  // A safety check, to handle if the player tries to move out of bounds.
-  try
-  {  // Safety check to see of the move is valid
-    if (!m_grid.at(m_playerY + dy).at(m_playerX + dx)->isWalkable())
+    catch (const std::out_of_range& e)
     {
-      std::cout << "You cannot move that way!" << '\n';
-      return;
+      tileRow.push_back(m_tiles.at('.')->clone());
     }
-
-    // Handle the exit logic and move the tile back onto its spot.
-    m_playerLocation->onExited();
-    std::swap(m_playerLocation, m_grid.at(m_playerY).at(m_playerX));
-
-    // Move the player to the new tile and handle the entered logic
-    m_playerX += dx;
-    m_playerY += dy;
-
-    std::swap(m_playerLocation, m_grid.at(m_playerY).at(m_playerX));
-    m_playerLocation->onEntered();}
-
-  catch (const std::out_of_range& e)
-  {
-    std::cout << "You cannot move that way!" << '\n';
   }
-
+  return tileRow;
 }
 
-/**
- * @brief Asks the player for a direction to move
- * @return Vector 2 containing the move direction [dx, dy]
- */
-std::vector<int> Scene::getMove() const
-{
-  std::cout << "What direction do you want to move? (n/s/e/w)" << "\n";
-  std::string direction;
-  std::cin >> direction;
-
-  int dx = 0;
-  int dy = 0;
-
-  switch (direction[0])
-  {
-  case 'n':
-    return {0, -1};
-  case 's':
-    return {0, 1};
-  case 'e':
-    return {1, 0};
-  case 'w':
-    return {-1, 0};
-
-  default:
-    std::cout << "Please enter a valid option" << '\n';
-    return {0, 0};
-  }
-}
+// --- Display --- //
 
 /**
  * @brief Renders the scene to the standard output.
@@ -151,4 +95,88 @@ void Scene::printTiles() const
     }
     std::cout << "| \n";
   }
+}
+
+// --- Movement --- //
+
+/**
+ * @brief Attempts to move the player to a new location within the grid.
+ *
+ * The function retrieves the movement vector and validates the destination.
+ * It handles the movement, including bounds checking, walkability
+ * checks, and tile transition events (onExited/onEntered).
+ * @note handles the std::out_of_range exception internally.
+ */
+void Scene::move()
+{
+  const std::vector<int> move = getMove();
+  const int dx = move[0];
+  const int dy = move[1];
+
+  // Check if we actually move
+  if (dx == 0 && dy == 0) return;
+
+  if (!isMoveValid(dx, dy)) return;
+
+  // Handle the move away from the tile.
+  m_playerLocation->onExited();
+  std::swap(m_playerLocation, m_grid.at(m_playerY).at(m_playerX));
+
+  // Move the player to the new tile and handle the entered logic
+  m_playerX += dx;
+  m_playerY += dy;
+
+  std::swap(m_playerLocation, m_grid.at(m_playerY).at(m_playerX));
+  m_playerLocation->onEntered();
+}
+
+/**
+ * @brief Asks the player for a direction to move
+ * @return Vector 2 containing the move direction [dx, dy]
+ */
+std::vector<int> Scene::getMove() const
+{
+  std::cout << "What direction do you want to move? (n/s/e/w)" << "\n";
+  std::string direction;
+  std::cin >> direction;
+
+  switch (direction[0])
+  {
+  case 'n':
+    return {0, -1};
+  case 's':
+    return {0, 1};
+  case 'e':
+    return {1, 0};
+  case 'w':
+    return {-1, 0};
+
+  default:
+    std::cout << "Invalid direction!" << '\n';
+    return {0, 0};
+  }
+}
+
+/**
+ *
+ * @param dx The distance in the horizontal direction.
+ * @param dy The distance in the vertical direction.
+ * @return True if the move is valid, false otherwise.
+ */
+bool Scene::isMoveValid(const int dx, const int dy) const
+{
+  try
+  {
+    if (!m_grid.at(m_playerY + dy).at(m_playerX + dx)->isWalkable())
+    {
+      std::cout << "You cannot move that way!" << '\n';
+      return false;
+    }
+  }
+  catch (const std::out_of_range& e)
+  {
+    std::cout << "You cannot move that way!" << '\n';
+    return false;
+  }
+  return true;
 }

@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <functional>
 
 
 /**
@@ -24,6 +25,9 @@ public:
   void display() const;
   void move();
 
+  using requestNewScene = std::function<void(bool)>;
+  requestNewScene nextScene;
+
 private:
   /**
    * @brief A 2D vector, storing the tiles in the scene.
@@ -34,20 +38,26 @@ private:
    */
   std::vector<std::vector<std::unique_ptr<Tile>>> m_grid;
 
+  /**
+   * @brief An unordered map, containing a char-Tile key-value pair.
+   */
+  std::unordered_map<char,std::shared_ptr<Tile>> m_tiles {
+    {'.', std::make_shared<EmptyTile>(EmptyTile())},
+    {'#', std::make_shared<PathTile>(PathTile())}
+  };
+
+  /**
+ * @brief Points to the tile, the player stands on.
+ */
+  std::unique_ptr<Tile> m_playerLocation;
+  int m_playerX;
+  int m_playerY;
+
+  [[nodiscard]] std::vector<std::unique_ptr<Tile>> generateTileRow(const std::string& row) const;
+
   void printBorder() const;
   void printTiles() const;
 
-  /**
-   * @brief Points to the tile, the player stands on.
-   */
-  std::unique_ptr<Tile> m_playerLocation;
-  int m_playerX {0};
-  int m_playerY {2};
-
   [[nodiscard]] std::vector<int> getMove() const;
-
-  std::unordered_map<char,std::shared_ptr<Tile>> m_tiles {
-  {' ', std::make_shared<EmptyTile>(EmptyTile())},
-  {'#', std::make_shared<PathTile>(PathTile())}
-  };
+  [[nodiscard]] bool isMoveValid(int dx, int dy) const;
 };
